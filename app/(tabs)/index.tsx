@@ -3,6 +3,18 @@ import {Link, useLocalSearchParams} from 'expo-router';
 import { useState } from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 // Import the functions you need from the SDKs you need
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+import '../../firebase';
+
+// Initialize Firebase
+
+const {firebaseConfig} = require('../../firebase')
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 
 export default function HomeScreen() {
