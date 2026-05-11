@@ -6,6 +6,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import {createUserWithEmailAndPassword, deleteUser, getAuth, signInWithEmailAndPassword, signOut} from 'firebase/auth'
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import '../../firebase';
@@ -14,7 +15,9 @@ import '../../firebase';
 
 const {firebaseConfig} = require('../../firebase')
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+//const analytics = getAnalytics(app);
+
+const auth = getAuth(app);
 
 
 export default function HomeScreen() {
@@ -30,33 +33,91 @@ async function debug(tag: String, str: String) {
   console.log(tag + "No. " + n.toString(), str);
   n++;
   
-}
+};
 
 function loginA() {
   setEmail(email);
   setPword(pword);
-    debug("loginA", "login: " + email + " password: " + pword + "success");   
-}
+
+  signInWithEmailAndPassword(auth, email, pword)
+  .then((userCredential) => {
+    const user = userCredential.user;
+    debug('siginEmailPassword :', 'success' + user.email)
+    setloginout('login: '+ user.email)
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    setloginout('login unsuccessful');
+    debug('signinEmailPassword: ', errorCode + " " + errorMessage)
+  });
+  
+
+  debug("loginA", "login: " + email + " password: " + pword + "success");   
+};
 
 
 function createA() {
   setEmail(email);
   setPword(pword);
+
+  createUserWithEmailAndPassword(auth, email, pword)
+  .then((userCredential) => {
+    const user = userCredential.user;
+    debug('CreateEmailPassword :', 'success' + user.email)
+    setloginout('Created + login: '+ user.email)
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    setloginout('Create unsuccessful');
+    debug('CreateEmailPassword: ', errorCode + " " + errorMessage)
+  });
+
+
   setCreate('created');
     debug("createA", "created: "  + email + " password: " + pword);      
-}
+};
 
 function logoutA() {
   setEmail(email);
   setPword(pword);
+
+  signOut(auth)
+  .then((userCredential) => {
+    debug('SignoutEmailPassword :', 'success' + email)
+    setloginout('Signout: '+ email)
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    setloginout('Signout unsuccessful');
+    debug('SignoutEmailPassword: ', errorCode + " " + errorMessage)
+  });
+
   debug("createA", "created: "  + email + " password: " + pword);      
-}
+};
+
 function deleteA() {
   setEmail(email);
   setPword(pword);
+
+  deleteUser(auth.currentUser!)
+  .then((userCredential) => {
+    
+    debug('DeleteEmailPassword :', 'success' + email)
+    setloginout('Delete: '+ email)
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    setloginout('Delete unsuccessful');
+    debug('DeleteEmailPassword: ', errorCode + " " + errorMessage)
+  });
+
   debug("deleteA", "Delete: "  + email + " password: " + pword);      
 
-}
+};
 
   return (
     <SafeAreaProvider>
@@ -102,22 +163,28 @@ function deleteA() {
        </SafeAreaView>
        </SafeAreaProvider>
   );
-}
+};
 
 const styles = StyleSheet.create({
   header: {
     padding: 40,
     marginBottom: 8,
+    backgroundColor: 'white'
   },
   rowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 30,
+    backgroundColor: 'white'
   },
   colContainer: {
     flexDirection: 'column',
     alignItems: 'center',
     gap: 30,
   },
- sUser: {},
+ sUser: {
+  borderColor: 'black',
+  borderWidth: 1,
+  minWidth: 100,
+ },
 });
