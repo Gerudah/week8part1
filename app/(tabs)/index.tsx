@@ -10,6 +10,7 @@ import {createUserWithEmailAndPassword, deleteUser, getAuth, signInWithEmailAndP
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 import '../../firebase';
+import {addDoc, collection, getFirestore} from 'firebase/firestore';
 
 // Initialize Firebase
 
@@ -27,11 +28,19 @@ const [created, setCreate] = useState('create');
 const [pword, setPword] = useState('password');
 const [email, setEmail] = useState('email@mail.com');
 
+const db = getFirestore(app);
 let n = 0;
 
 async function debug(tag: String, str: String) {
   console.log(tag + "No. " + n.toString(), str);
   n++;
+  try{const docref = await addDoc(collection(db, "Debug"),{
+        Tag: tag + "No. " + n.toString(),
+        Str: str,
+  });
+  } catch(e){
+    console.error("Error adding document: ",e);
+  }
   
 };
 
